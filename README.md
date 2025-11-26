@@ -1,16 +1,18 @@
 # 📒 TP Agenda Symfony
 
-Projet réalisé dans le cadre de ma formation développeur web (septembre 2024 - janvier 2025)
+Projet réalisé dans le cadre de ma formation développeur web (septembre 2024 - janvier 2026)
 
 ## 📋 Description
 
-Application de gestion de contacts développée avec Symfony et Twig. Ce projet permet de lister des contacts et d'afficher leurs détails.
+Application de gestion de contacts développée avec Symfony, Twig et Doctrine. Ce projet permet de lister des contacts stockés en base de données et d'afficher leurs détails.
 
 ## 🛠️ Technologies utilisées
 
 - **PHP** 8.x
 - **Symfony** 7
 - **Twig** (moteur de templates)
+- **Doctrine ORM** (gestion de base de données)
+- **MySQL** 8.0
 - **Bootstrap** 4.4
 - **Composer** (gestionnaire de dépendances)
 
@@ -21,6 +23,8 @@ Application de gestion de contacts développée avec Symfony et Twig. Ce projet 
 - ✅ Navigation avec navbar Bootstrap
 - ✅ Liens dynamiques avec la fonction Twig `path()`
 - ✅ Architecture MVC avec contrôleurs et templates
+- ✅ Persistance des données en base MySQL via Doctrine
+- ✅ Affichage dynamique des contacts depuis la base de données
 
 ## 🚀 Installation
 
@@ -28,6 +32,7 @@ Application de gestion de contacts développée avec Symfony et Twig. Ce projet 
 
 - PHP 8.x installé
 - Composer installé
+- MySQL 8.x installé
 - Symfony CLI (optionnel mais recommandé)
 
 ### Étapes d'installation
@@ -43,7 +48,20 @@ cd TP-Agenda-Symfony
 composer install
 ```
 
-3. **Lancer le serveur de développement** :
+3. **Configurer la base de données** :
+
+Copier le fichier `.env` en `.env.local` et modifier la ligne `DATABASE_URL` :
+```
+DATABASE_URL="mysql://utilisateur:motdepasse@127.0.0.1:3306/agenda?serverVersion=8.0.32&charset=utf8mb4"
+```
+
+4. **Créer la base de données et exécuter les migrations** :
+```bash
+php bin/console doctrine:database:create
+php bin/console doctrine:migrations:migrate
+```
+
+5. **Lancer le serveur de développement** :
 
 Avec Symfony CLI :
 ```bash
@@ -55,24 +73,28 @@ Ou avec PHP natif :
 php -S localhost:8000 -t public/
 ```
 
-4. **Accéder à l'application** :
+6. **Accéder à l'application** :
 - Page d'accueil : http://localhost:8000/home
-- Page contact : http://localhost:8000/contact
+- Page contact : http://localhost:8000/contact/{id}
 
 ## 📁 Structure du projet
-
 ```
 ├── src/
-│   └── Controller/
-│       └── HomeController.php    # Contrôleur principal avec les routes
+│   ├── Controller/
+│   │   └── HomeController.php        # Contrôleur principal avec les routes
+│   ├── Entity/
+│   │   └── Contact.php               # Entité Contact (modèle de données)
+│   └── Repository/
+│       └── ContactRepository.php     # Repository pour les requêtes Contact
 ├── templates/
-│   ├── base.html.twig            # Template parent (layout)
+│   ├── base.html.twig                # Template parent (layout)
 │   ├── home/
-│   │   └── home.html.twig        # Page d'accueil avec tableau des contacts
-│   └── contact.html.twig         # Page détails d'un contact
-├── public/                        # Point d'entrée de l'application
-├── .gitignore                     # Fichiers ignorés par Git
-└── composer.json                  # Dépendances du projet
+│   │   └── home.html.twig            # Page d'accueil avec tableau des contacts
+│   └── contact.html.twig             # Page détails d'un contact
+├── migrations/                        # Fichiers de migration Doctrine
+├── public/                            # Point d'entrée de l'application
+├── .gitignore                         # Fichiers ignorés par Git
+└── composer.json                      # Dépendances du projet
 ```
 
 ## 🎓 Ce que j'ai appris
@@ -80,13 +102,24 @@ php -S localhost:8000 -t public/
 ### Symfony
 - Création de contrôleurs avec `AbstractController`
 - Définition de routes avec l'attribut `#[Route]`
+- Passage de paramètres dans les URLs avec `{id}`
 - Méthode `render()` pour afficher des templates
+- Injection de dépendances (Repository, EntityManager)
+
+### Doctrine ORM
+- Création d'entités avec `make:entity`
+- Types de champs : `string`, `integer` et leurs options (length, nullable)
+- Génération de migrations avec `make:migration`
+- Exécution des migrations avec `doctrine:migrations:migrate`
+- Persistance des données avec `persist()` et `flush()`
+- Récupération des données avec `findAll()` et ParamConverter
 
 ### Twig
 - Héritage de templates avec `{% extends %}`
 - Création de blocs réutilisables avec `{% block %}`
 - Utilisation de `{{ parent() }}` pour conserver le contenu parent
-- Génération d'URLs dynamiques avec `{{ path() }}`
+- Génération d'URLs dynamiques avec `{{ path('route', {id: value}) }}`
+- Boucles avec `{% for item in collection %}`
 
 ### Bootstrap
 - Intégration de Bootstrap 4.4 via CDN
@@ -111,6 +144,14 @@ php -S localhost:8000 -t public/
 - ✅ Route `/contact` fonctionnelle
 - ✅ Liens cliquables dans la navbar et le tableau
 
+### TP1 - Exercice 3
+- ✅ Configuration de la connexion base de données
+- ✅ Création de l'entité `Contact` (id, nom, prenom, telephone, adresse, ville, age)
+- ✅ Migration et création de la table en base
+- ✅ Persistance de données via EntityManager
+- ✅ Affichage dynamique des contacts depuis la base
+- ✅ Route paramétrée `/contact/{id}` avec ParamConverter
+
 ## 👨‍💻 Auteur
 
 **Anthony CC-G** - Étudiant développeur web en formation
@@ -123,4 +164,4 @@ Projet éducatif - Libre d'utilisation pour l'apprentissage
 
 ---
 
-⭐ N'hésite pas à mettre une étoile si ce projet t'a aidé dans ton apprentissage !
+⭐ N'hésite pas à mettre une étoile si ce projet t'a aidé dans ton apprentissage!
