@@ -40,4 +40,20 @@ class ContactRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    /**
+ * Récupère tous les contacts ayant plus de 18 ans
+ */
+    public function findAdults(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.age > :age')
+            ->setParameter('age', 18)
+            ->orderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
 }
