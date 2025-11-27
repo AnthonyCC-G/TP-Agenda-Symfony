@@ -24,7 +24,11 @@
                         <td>{{ contact.nom }}</td>
                         <td>{{ contact.prenom }}</td>
                         <td>{{ contact.telephone }}</td>
-                        <td><a href="{{ path('app_contact', {id: contact.id}) }}" class="btn btn-info">Afficher</a></td>
+                        <td>
+                            <a href="{{ path('app_contact', {id: contact.id}) }}" class="btn btn-info">Afficher</a>
+                            <a href="{{ path('app_modifier', {id: contact.id}) }}" class="btn btn-warning">Modifier</a>
+                            <a href="{{ path('app_supprimer', {id: contact.id}) }}" class="btn btn-danger">Supprimer</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
