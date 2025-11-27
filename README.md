@@ -4,7 +4,7 @@ Projet réalisé dans le cadre de ma formation développeur web (septembre 2024 
 
 ## 📋 Description
 
-Application de gestion de contacts développée avec Symfony, Twig et Doctrine. Ce projet permet de lister des contacts stockés en base de données et d'afficher leurs détails.
+Application de gestion de contacts développée avec Symfony, Twig et Doctrine. Ce projet permet de créer, lister, afficher, modifier et supprimer des contacts stockés en base de données.
 
 ## 🛠️ Technologies utilisées
 
@@ -25,6 +25,9 @@ Application de gestion de contacts développée avec Symfony, Twig et Doctrine. 
 - ✅ Architecture MVC avec contrôleurs et templates
 - ✅ Persistance des données en base MySQL via Doctrine
 - ✅ Affichage dynamique des contacts depuis la base de données
+- ✅ Modification du numéro de téléphone d'un contact
+- ✅ Suppression d'un contact
+- ✅ Filtrage des contacts (affichage uniquement des majeurs +18 ans)
 
 ## 🚀 Installation
 
@@ -76,6 +79,8 @@ php -S localhost:8000 -t public/
 6. **Accéder à l'application** :
 - Page d'accueil : http://localhost:8000/home
 - Page contact : http://localhost:8000/contact/{id}
+- Modifier un contact : http://localhost:8000/modifier/{id}
+- Supprimer un contact : http://localhost:8000/supprimer/{id}
 
 ## 📁 Structure du projet
 ```
@@ -105,14 +110,21 @@ php -S localhost:8000 -t public/
 - Passage de paramètres dans les URLs avec `{id}`
 - Méthode `render()` pour afficher des templates
 - Injection de dépendances (Repository, EntityManager)
+- Redirection avec `redirectToRoute()`
 
 ### Doctrine ORM
 - Création d'entités avec `make:entity`
 - Types de champs : `string`, `integer` et leurs options (length, nullable)
 - Génération de migrations avec `make:migration`
 - Exécution des migrations avec `doctrine:migrations:migrate`
-- Persistance des données avec `persist()` et `flush()`
-- Récupération des données avec `findAll()` et ParamConverter
+- **Opérations CRUD complètes** :
+  - **Create** : `persist()` et `flush()` pour créer
+  - **Read** : `findAll()` et ParamConverter pour lire
+  - **Update** : modification des propriétés puis `flush()` pour mettre à jour
+  - **Delete** : `remove()` et `flush()` pour supprimer
+- Création de méthodes personnalisées dans les Repositories
+- Utilisation du **QueryBuilder** pour des requêtes complexes
+- Filtrage avec `andWhere()` et `setParameter()`
 
 ### Twig
 - Héritage de templates avec `{% extends %}`
@@ -125,6 +137,7 @@ php -S localhost:8000 -t public/
 - Intégration de Bootstrap 4.4 via CDN
 - Utilisation de composants : navbar, table, jumbotron, buttons
 - Classes utilitaires : `container`, `mt-5`, `btn`, etc.
+- Classes de couleurs pour les boutons : `btn-info`, `btn-warning`, `btn-danger`
 
 ### Git & GitHub
 - Gestion de versions avec Git
@@ -133,24 +146,31 @@ php -S localhost:8000 -t public/
 
 ## 📝 Exercices réalisés
 
-### TP1 - Exercice 1
+### TP1 - Exercice 1 : Twig (Templates)
 - ✅ Création du contrôleur `HomeController`
 - ✅ Mise en place de `base.html.twig` avec Bootstrap
 - ✅ Création de la navbar
 - ✅ Template `home.html.twig` avec tableau des contacts
 
-### TP1 - Exercice 2
+### TP1 - Exercice 2 : Twig (Routing)
 - ✅ Template `contact.html.twig` avec jumbotron
-- ✅ Route `/contact` fonctionnelle
+- ✅ Route `/contact/{id}` fonctionnelle
 - ✅ Liens cliquables dans la navbar et le tableau
 
-### TP1 - Exercice 3
+### TP1 - Exercice 3 : Doctrine (Lecture)
 - ✅ Configuration de la connexion base de données
 - ✅ Création de l'entité `Contact` (id, nom, prenom, telephone, adresse, ville, age)
 - ✅ Migration et création de la table en base
 - ✅ Persistance de données via EntityManager
 - ✅ Affichage dynamique des contacts depuis la base
 - ✅ Route paramétrée `/contact/{id}` avec ParamConverter
+
+### TP1 - Exercice 4 : Doctrine (Modification, Suppression, Filtrage)
+- ✅ **Partie 1** : Bouton "Modifier" qui change le téléphone en "New number!"
+- ✅ **Partie 2** : Bouton "Supprimer" qui supprime un contact de la base
+- ✅ **Partie 3** : Filtre affichant uniquement les contacts de plus de 18 ans
+- ✅ Méthode personnalisée `findAdults()` dans le Repository
+- ✅ Utilisation du QueryBuilder pour filtrer les données
 
 ## 👨‍💻 Auteur
 
