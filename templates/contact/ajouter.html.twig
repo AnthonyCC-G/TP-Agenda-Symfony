@@ -1,0 +1,16 @@
+{% extends "base.html.twig" %}
+
+{% block header %}
+    {{ parent() }}
+{% endblock %}
+
+{% block mainContent %}
+    <div class="container mt-4">
+        <h2>Ajouter un contact</h2>
+        
+        {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
+            {{ form_widget(form) }}
+            <button type="submit" class="btn btn-primary mt-3">Ajouter</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
