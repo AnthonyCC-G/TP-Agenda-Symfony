@@ -57,33 +57,33 @@ final class HomeController extends AbstractController
     // }
     
     
-    #[Route('/test-add-contacts', name: 'test_add_contacts')]
-public function testAddContacts(EntityManagerInterface $entityManager): Response
-{
-    // Contact mineur (moins de 18 ans)
-    $contact1 = new Contact();
-    $contact1->setNom('Jeune');
-    $contact1->setPrenom('Paul');
-    $contact1->setTelephone('0601020304');
-    $contact1->setAdresse('1 rue des Ados');
-    $contact1->setVille('Lille');
-    $contact1->setAge(16); // Mineur !
+    // #[Route('/test-add-contacts', name: 'test_add_contacts')]
+    // public function testAddContacts(EntityManagerInterface $entityManager): Response
+    // {
+    // // Contact mineur (moins de 18 ans)
+    // $contact1 = new Contact();
+    // $contact1->setNom('Jeune');
+    // $contact1->setPrenom('Paul');
+    // $contact1->setTelephone('0601020304');
+    // $contact1->setAdresse('1 rue des Ados');
+    // $contact1->setVille('Lille');
+    // $contact1->setAge(16); // Mineur !
     
-    // Contact majeur (plus de 18 ans)
-    $contact2 = new Contact();
-    $contact2->setNom('Adulte');
-    $contact2->setPrenom('Marie');
-    $contact2->setTelephone('0605060708');
-    $contact2->setAdresse('2 rue des Grands');
-    $contact2->setVille('Paris');
-    $contact2->setAge(25); // Majeur
+    // // Contact majeur (plus de 18 ans)
+    // $contact2 = new Contact();
+    // $contact2->setNom('Adulte');
+    // $contact2->setPrenom('Marie');
+    // $contact2->setTelephone('0605060708');
+    // $contact2->setAdresse('2 rue des Grands');
+    // $contact2->setVille('Paris');
+    // $contact2->setAge(25); // Majeur
     
-    $entityManager->persist($contact1);
-    $entityManager->persist($contact2);
-    $entityManager->flush();
+    // $entityManager->persist($contact1);
+    // $entityManager->persist($contact2);
+    // $entityManager->flush();
     
-    return new Response('2 contacts ajoutés : 1 mineur (16 ans) et 1 majeur (25 ans) !');
-}
+    // return new Response('2 contacts ajoutés : 1 mineur (16 ans) et 1 majeur (25 ans) !');
+    // }
 
 
     #[Route('/home', name: 'app_home')]
