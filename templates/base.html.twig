@@ -1,4 +1,4 @@
-<!doctype html>
+<!Doctype html>
 <html lang="en">
     <head>
         <!-- Required meta tags -->
@@ -29,9 +29,18 @@
                         <div class="navbar-nav flex-row">
                             <a class="nav-link px-3" href="{{ path('app_home') }}">Home</a>
                             <a class="nav-link px-3" href="{{ path('app_contact_ajouter') }}">Ajouter un contact</a>
-                            <a class="nav-link px-3">Pricing</a>
+                            <a class="nav-link px-3" href="{{ path('app_register') }}">S'inscrire</a>
+                            <a class="nav-link px-3" href="{{ path('app_login') }}">Se connecter</a>
                         </div>
                     </nav>
+                    {% if app.user %}
+                        <div class="container mt-2">
+                            <small class="text-muted">
+                                Vous êtes connecté en tant que {{ app.user.userIdentifier }} - 
+                                <a href="{{ path('app_logout') }}">Se déconnecter</a>
+                            </small>
+                        </div>
+                    {% endif %}
                 {% endblock %}
         {% endblock %}<!-- endblock du header -->
 
