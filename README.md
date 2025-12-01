@@ -4,7 +4,7 @@ Projet réalisé dans le cadre de ma formation développeur web (septembre 2024 
 
 ## 📋 Description
 
-Application de gestion de contacts développée avec Symfony, Twig et Doctrine. Ce projet permet de créer, lister, afficher, modifier et supprimer des contacts stockés en base de données avec des formulaires validés.
+Application de gestion de contacts développée avec Symfony, Twig et Doctrine. Ce projet permet de créer, lister, afficher, modifier et supprimer des contacts stockés en base de données avec des formulaires validés et un système d'authentification complet.
 
 ## 🛠️ Technologies utilisées
 
@@ -16,6 +16,7 @@ Application de gestion de contacts développée avec Symfony, Twig et Doctrine. 
 - **Bootstrap** 4.4
 - **Composer** (gestionnaire de dépendances)
 - **Symfony Forms** (génération et validation de formulaires)
+- **Symfony Security** (authentification et autorisation)
 
 ## ✨ Fonctionnalités
 
@@ -33,6 +34,10 @@ Application de gestion de contacts développée avec Symfony, Twig et Doctrine. 
 - ✅ **Formulaire de modification de contact** avec validation complète
 - ✅ **Messages flash** de confirmation (succès)
 - ✅ **Validation des données** avec contraintes personnalisées
+- ✅ **Système d'inscription** avec hashage des mots de passe
+- ✅ **Système de connexion/déconnexion** sécurisé
+- ✅ **Gestion des permissions** selon l'état de connexion
+- ✅ **Protection des fonctionnalités sensibles** (modification, suppression)
 
 ## 🚀 Installation
 
@@ -87,31 +92,45 @@ php -S localhost:8000 -t public/
 - Ajouter un contact : http://localhost:8000/contact/ajouter
 - Modifier un contact : http://localhost:8000/contact/modifier/{id}
 - Supprimer un contact : http://localhost:8000/supprimer/{id}
+- S'inscrire : http://localhost:8000/register
+- Se connecter : http://localhost:8000/login
 
 ## 📁 Structure du projet
 ```
 ├── src/
 │   ├── Controller/
-│   │   ├── HomeController.php        # Contrôleur principal (liste, affichage, modification, suppression)
-│   │   └── ContactController.php     # Contrôleur des formulaires (ajout, modification)
+│   │   ├── HomeController.php            # Contrôleur principal (liste, affichage, modification, suppression)
+│   │   ├── ContactController.php         # Contrôleur des formulaires (ajout, modification)
+│   │   ├── RegistrationController.php    # Contrôleur d'inscription
+│   │   └── SecurityController.php        # Contrôleur de connexion/déconnexion
 │   ├── Entity/
-│   │   └── Contact.php               # Entité Contact avec contraintes de validation
+│   │   ├── Contact.php                   # Entité Contact avec contraintes de validation
+│   │   └── User.php                      # Entité User pour l'authentification
 │   ├── Form/
-│   │   └── ContactType.php           # Classe de formulaire générée
+│   │   ├── ContactType.php               # Classe de formulaire Contact
+│   │   └── RegistrationFormType.php      # Classe de formulaire d'inscription
 │   └── Repository/
-│       └── ContactRepository.php     # Repository pour les requêtes Contact
+│       ├── ContactRepository.php         # Repository pour les requêtes Contact
+│       └── UserRepository.php            # Repository pour les requêtes User
 ├── templates/
-│   ├── base.html.twig                # Template parent (layout)
+│   ├── base.html.twig                    # Template parent (layout) avec navbar dynamique
 │   ├── home/
-│   │   └── home.html.twig            # Page d'accueil avec tableau et messages flash
+│   │   └── home.html.twig                # Page d'accueil avec tableau et permissions
 │   ├── contact/
-│   │   ├── ajouter.html.twig         # Formulaire d'ajout de contact
-│   │   └── modifier.html.twig        # Formulaire de modification de contact
-│   └── contact.html.twig             # Page détails d'un contact
-├── migrations/                        # Fichiers de migration Doctrine
-├── public/                            # Point d'entrée de l'application
-├── .gitignore                         # Fichiers ignorés par Git
-└── composer.json                      # Dépendances du projet
+│   │   ├── ajouter.html.twig             # Formulaire d'ajout de contact
+│   │   └── modifier.html.twig            # Formulaire de modification de contact
+│   ├── registration/
+│   │   └── register.html.twig            # Formulaire d'inscription
+│   ├── security/
+│   │   └── login.html.twig               # Formulaire de connexion
+│   └── contact.html.twig                 # Page détails d'un contact
+├── config/
+│   └── packages/
+│       └── security.yaml                 # Configuration du système de sécurité
+├── migrations/                            # Fichiers de migration Doctrine
+├── public/                                # Point d'entrée de l'application
+├── .gitignore                             # Fichiers ignorés par Git
+└── composer.json                          # Dépendances du projet
 ```
 
 ## 🎓 Ce que j'ai appris
@@ -125,6 +144,20 @@ php -S localhost:8000 -t public/
 - Redirection avec `redirectToRoute()`
 - **Messages flash** avec `addFlash()` pour le feedback utilisateur
 - **ParamConverter** pour récupérer automatiquement des entités depuis l'URL
+
+### Symfony Security
+- Commande `make:user` pour créer l'entité User
+- Commande `make:registration-form` pour générer le système d'inscription
+- Commande `make:security:form-login` pour générer le système de connexion
+- Configuration du fichier `security.yaml` :
+  - Définition des **password hashers** pour le cryptage
+  - Configuration des **providers** (fournisseurs d'utilisateurs)
+  - Configuration des **firewalls** (pare-feu de sécurité)
+  - Définition des **access_control** (contrôle d'accès)
+- Redirections après connexion/déconnexion avec `default_target_path` et `target`
+- Protection CSRF avec `enable_csrf: true`
+- Variable Twig `app.user` pour détecter l'utilisateur connecté
+- `app.user.userIdentifier` pour récupérer l'email de l'utilisateur
 
 ### Symfony Forms
 - Génération de classes de formulaire avec `make:form`
@@ -164,8 +197,11 @@ php -S localhost:8000 -t public/
 - Utilisation de `{{ parent() }}` pour conserver le contenu parent
 - Génération d'URLs dynamiques avec `{{ path('route', {id: value}) }}`
 - Boucles avec `{% for item in collection %}`
+- **Conditions** avec `{% if %}...{% endif %}`
+- **Affichage conditionnel** selon l'état de connexion avec `{% if app.user %}`
 - **Affichage des messages flash** avec `app.flashes('success')`
 - **Génération automatique de formulaires** avec les helpers Twig
+- **Importance d'adapter les blocs** générés automatiquement par Symfony
 
 ### Bootstrap
 - Intégration de Bootstrap 4.4 via CDN
@@ -229,6 +265,35 @@ php -S localhost:8000 -t public/
   - Utilisation de `flush()` sans `persist()` (objet déjà géré par Doctrine)
   - Message flash "Contact modifié avec succès"
 
+### TP1 - Exercice 6 : Sécurité et Authentification
+- ✅ **Partie 1** : Système d'inscription
+  - Création de l'entité `User` avec `make:user`
+  - Génération du formulaire d'inscription avec `make:registration-form`
+  - Hashage automatique des mots de passe avec `password_hashers`
+  - Template `register.html.twig` avec formulaire d'inscription
+  - Validation de l'email (unique en base)
+  - Lien "S'inscrire" dans la navbar
+  - Migration et création de la table `user`
+  
+- ✅ **Partie 2** : Système de connexion/déconnexion
+  - Génération du système de connexion avec `make:security:form-login`
+  - Création du `SecurityController` avec routes `/login` et `/logout`
+  - Template `login.html.twig` avec formulaire de connexion
+  - Configuration de `security.yaml` pour l'authentification
+  - Redirections après connexion/déconnexion vers la page d'accueil
+  - Protection CSRF activée
+  - Lien "Se connecter" dans la navbar
+  
+- ✅ **Partie 3** : Gestion des permissions
+  - Affichage conditionnel du menu selon l'état de connexion :
+    - Utilisateur **non connecté** : liens "S'inscrire" et "Se connecter" visibles
+    - Utilisateur **connecté** : lien "Ajouter un contact" visible + message de connexion
+  - Protection des fonctionnalités sensibles :
+    - Boutons "Modifier" et "Supprimer" visibles uniquement pour les utilisateurs connectés
+    - Bouton "Afficher" visible pour tout le monde
+  - Message "Vous êtes connecté en tant que [email]" avec lien de déconnexion
+  - Utilisation de `{% if app.user %}` dans les templates Twig
+
 ## 💡 Points clés techniques appris
 
 ### Différence persist() vs flush()
@@ -249,6 +314,20 @@ php -S localhost:8000 -t public/
 - Les contraintes se placent dans l'**entité** (pas dans le formulaire)
 - Principe : les règles concernent les **données**, pas l'interface
 - Validation automatique lors de `isValid()`
+
+### Sécurité Symfony
+- **Hashage des mots de passe** : jamais stocker de mots de passe en clair
+- **Password hasher** : algorithme automatique et sécurisé (bcrypt/argon2)
+- **CSRF Protection** : tokens de sécurité pour empêcher les attaques
+- **app.user** : variable Twig magique pour accéder à l'utilisateur connecté
+- **Affichage conditionnel** : utiliser `{% if app.user %}` pour les permissions
+- **Firewall** : système de protection des routes dans Symfony
+
+### Bonnes pratiques apprises
+- Toujours **adapter les blocs Twig** générés par les commandes Symfony
+- **Vider le cache** après modification de `security.yaml` : `php bin/console cache:clear`
+- Utiliser `make:security:form-login` (pas `make:auth` qui est déprécié)
+- Rediriger l'utilisateur après connexion ET déconnexion pour une meilleure UX
 
 ## 👨‍💻 Auteur
 
