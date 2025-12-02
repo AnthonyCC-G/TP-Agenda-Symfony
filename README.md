@@ -1,17 +1,25 @@
 # 📒 TP Agenda Symfony
 
+![PHP](https://img.shields.io/badge/PHP-8.x-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![Symfony](https://img.shields.io/badge/Symfony-7-000000?style=for-the-badge&logo=symfony&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Doctrine](https://img.shields.io/badge/Doctrine-ORM-FC6A31?style=for-the-badge&logo=doctrine&logoColor=white)
+![Twig](https://img.shields.io/badge/Twig-Templates-339933?style=for-the-badge&logo=symfony&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-4.4-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
+![Composer](https://img.shields.io/badge/Composer-Dependency-885630?style=for-the-badge&logo=composer&logoColor=white)
+
 Projet réalisé dans le cadre de ma formation développeur web (septembre 2024 - janvier 2026)
 
 ## 📋 Description
 
-Application de gestion de contacts développée avec Symfony, Twig et Doctrine. Ce projet permet de créer, lister, afficher, modifier et supprimer des contacts stockés en base de données avec des formulaires validés et un système d'authentification complet.
+Application de gestion de contacts développée avec Symfony, Twig et Doctrine. Ce projet permet de créer, lister, afficher, modifier et supprimer des contacts stockés en base de données avec des formulaires validés, un système d'authentification complet et une catégorisation des contacts.
 
 ## 🛠️ Technologies utilisées
 
 - **PHP** 8.x
 - **Symfony** 7
 - **Twig** (moteur de templates)
-- **Doctrine ORM** (gestion de base de données)
+- **Doctrine ORM** (gestion de base de données et relations)
 - **MySQL** 8.0
 - **Bootstrap** 4.4
 - **Composer** (gestionnaire de dépendances)
@@ -38,6 +46,10 @@ Application de gestion de contacts développée avec Symfony, Twig et Doctrine. 
 - ✅ **Système de connexion/déconnexion** sécurisé
 - ✅ **Gestion des permissions** selon l'état de connexion
 - ✅ **Protection des fonctionnalités sensibles** (modification, suppression)
+- ✅ **Catégorisation des contacts** (famille, amis, travail)
+- ✅ **Relations entre entités** (ManyToOne Contact → Category)
+- ✅ **Affichage des catégories** dans le tableau de contacts
+- ✅ **Sélection de catégorie** dans les formulaires d'ajout/modification
 
 ## 🚀 Installation
 
@@ -105,12 +117,14 @@ php -S localhost:8000 -t public/
 │   │   └── SecurityController.php        # Contrôleur de connexion/déconnexion
 │   ├── Entity/
 │   │   ├── Contact.php                   # Entité Contact avec contraintes de validation
+│   │   ├── Category.php                  # Entité Category pour catégoriser les contacts
 │   │   └── User.php                      # Entité User pour l'authentification
 │   ├── Form/
-│   │   ├── ContactType.php               # Classe de formulaire Contact
+│   │   ├── ContactType.php               # Classe de formulaire Contact avec sélection de catégorie
 │   │   └── RegistrationFormType.php      # Classe de formulaire d'inscription
 │   └── Repository/
 │       ├── ContactRepository.php         # Repository pour les requêtes Contact
+│       ├── CategoryRepository.php        # Repository pour les requêtes Category
 │       └── UserRepository.php            # Repository pour les requêtes User
 ├── templates/
 │   ├── base.html.twig                    # Template parent (layout) avec navbar dynamique
@@ -167,6 +181,11 @@ php -S localhost:8000 -t public/
 - Validation avec `isSubmitted()` et `isValid()`
 - Affichage dans Twig avec `form_start()`, `form_widget()`, `form_end()`
 - Désactivation de Turbo avec `data-turbo="false"` pour éviter les conflits
+- **EntityType** : type de champ pour afficher des entités en liste déroulante
+- Option `class` : spécifier quelle entité afficher
+- Option `choice_label` : définir quelle propriété afficher dans le dropdown
+- Option `placeholder` : texte par défaut dans le menu déroulant
+- Option `required` : rendre le champ obligatoire ou optionnel
 
 ### Validation des données
 - Utilisation du composant **Validator** de Symfony
@@ -191,6 +210,20 @@ php -S localhost:8000 -t public/
 - Utilisation du **QueryBuilder** pour des requêtes complexes
 - Filtrage avec `andWhere()` et `setParameter()`
 
+### Relations Doctrine
+- **Les 3 types de relations** : OneToOne (1:1), OneToMany/ManyToOne (1:N), ManyToMany (N:N)
+- Création d'une **relation ManyToOne** (côté "plusieurs")
+- Création d'une **relation OneToMany** (côté "un")
+- Relations **bidirectionnelles** : navigation dans les deux sens
+- Relations **unidirectionnelles** : navigation dans un seul sens
+- **Clé étrangère** : stockée du côté "Many" (ex: `category_id` dans `contact`)
+- Annotation `#[ORM\ManyToOne]` pour définir une relation
+- Annotation `#[ORM\OneToMany]` pour l'inverse de la relation
+- Propriété `targetEntity` pour spécifier l'entité cible
+- Propriété `mappedBy` pour indiquer le côté propriétaire de la relation
+- **Cascade operations** : gestion des suppressions/mises à jour en cascade
+- **Collection** Doctrine pour gérer les ensembles d'entités liées
+
 ### Twig
 - Héritage de templates avec `{% extends %}`
 - Création de blocs réutilisables avec `{% block %}`
@@ -202,6 +235,9 @@ php -S localhost:8000 -t public/
 - **Affichage des messages flash** avec `app.flashes('success')`
 - **Génération automatique de formulaires** avec les helpers Twig
 - **Importance d'adapter les blocs** générés automatiquement par Symfony
+- **Opérateur ternaire** : `{{ condition ? valeur_si_vrai : valeur_si_faux }}`
+- **Navigation dans les relations** : `{{ contact.category.title }}`
+- **Gestion des valeurs nulles** : vérifier l'existence avant d'accéder aux propriétés
 
 ### Bootstrap
 - Intégration de Bootstrap 4.4 via CDN
@@ -294,6 +330,23 @@ php -S localhost:8000 -t public/
   - Message "Vous êtes connecté en tant que [email]" avec lien de déconnexion
   - Utilisation de `{% if app.user %}` dans les templates Twig
 
+### TP1 - Exercice 7 : Relations entre entités
+- ✅ **Partie 1** : Création de l'entité Category et relation avec Contact
+  - Création de l'entité `Category` (id, title)
+  - Génération des 3 catégories : famille, amis, travail
+  - Création de la relation **ManyToOne** du côté Contact
+  - Création de la relation **OneToMany** du côté Category (bidirectionnelle)
+  - Migration pour ajouter la table `category` et la colonne `category_id` dans `contact`
+  - Compréhension des **clés étrangères** et de leur stockage
+  
+- ✅ **Partie 2** : Affichage et gestion des catégories dans l'interface
+  - Ajout d'une colonne "Catégorie" dans le tableau de la page d'accueil
+  - Affichage du titre de la catégorie pour chaque contact
+  - Gestion des contacts sans catégorie avec l'opérateur ternaire Twig
+  - Ajout du champ **EntityType** dans `ContactType` pour la sélection de catégorie
+  - Configuration du dropdown avec `choice_label` et `placeholder`
+  - Test complet : ajout, modification, et assignation de catégories
+
 ## 💡 Points clés techniques appris
 
 ### Différence persist() vs flush()
@@ -323,11 +376,29 @@ php -S localhost:8000 -t public/
 - **Affichage conditionnel** : utiliser `{% if app.user %}` pour les permissions
 - **Firewall** : système de protection des routes dans Symfony
 
+### Relations entre entités
+- **Identifier le type de relation** : se poser 2 questions (combien de A pour un B ? combien de B pour un A ?)
+- **Côté propriétaire** : toujours du côté "Many" dans une relation OneToMany/ManyToOne
+- **Clé étrangère** : stockée dans la table du côté "Many"
+- **Relation bidirectionnelle** : permet la navigation dans les deux sens mais nécessite plus de configuration
+- **Approche méthodique** : créer d'abord l'entité simple, puis ajouter la relation (meilleure compréhension)
+- **EntityType dans les formulaires** : pour créer des dropdowns liés à des entités
+- **Opérateur ternaire en Twig** : pour gérer les valeurs nulles élégamment
+
+### Comparaison avec d'autres outils
+- Les relations en Doctrine sont similaires à celles dans **PowerBI** ou d'autres outils de modélisation
+- Même concept de **cardinalité** (1:1, 1:N, N:N)
+- Différence : en Symfony, on choisit explicitement si la relation est bidirectionnelle
+- Les **tables intermédiaires** (pour ManyToMany) peuvent être personnalisées en Symfony
+
 ### Bonnes pratiques apprises
 - Toujours **adapter les blocs Twig** générés par les commandes Symfony
 - **Vider le cache** après modification de `security.yaml` : `php bin/console cache:clear`
 - Utiliser `make:security:form-login` (pas `make:auth` qui est déprécié)
 - Rediriger l'utilisateur après connexion ET déconnexion pour une meilleure UX
+- **Commenter plutôt que supprimer** le code qui pourrait servir de référence
+- **Tester systématiquement** toutes les fonctionnalités après implémentation
+- **Approche méthodique** : comprendre chaque étape plutôt que chercher la rapidité
 
 ## 👨‍💻 Auteur
 
@@ -341,4 +412,4 @@ Projet éducatif - Libre d'utilisation pour l'apprentissage
 
 ---
 
-⭐ N'hésite pas à mettre une étoile si ce projet t'a aidé dans ton apprentissage!
+⭐ 
