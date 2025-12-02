@@ -14,6 +14,7 @@
                     <th>Nom</th>
                     <th>Prénom</th>
                     <th>Téléphone</th>
+                    <th>Catégorie</th> 
                     <th>Action</th>
                 </tr>
             </thead>
@@ -24,6 +25,7 @@
                         <td>{{ contact.nom }}</td>
                         <td>{{ contact.prenom }}</td>
                         <td>{{ contact.telephone }}</td>
+                        <td>{{ contact.category ? contact.category.title : 'Aucune' }}</td>
                         <td>
                             <a href="{{ path('app_contact', {id: contact.id}) }}" class="btn btn-info">Afficher</a>
                             

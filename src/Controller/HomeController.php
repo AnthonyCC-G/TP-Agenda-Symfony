@@ -8,6 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Contact;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ContactRepository;
+use App\Entity\Category;
 
 
 final class HomeController extends AbstractController
@@ -109,13 +110,13 @@ final class HomeController extends AbstractController
     public function modifier(Contact $contact, EntityManagerInterface $entityManager): Response
     {
     
-    $contact->setTelephone('New number!');
+        $contact->setTelephone('New number!');
     
     
-    $entityManager->flush();
+        $entityManager->flush();
     
     
-    return $this->redirectToRoute('app_home');
+        return $this->redirectToRoute('app_home');
     
     }
 
@@ -130,5 +131,28 @@ final class HomeController extends AbstractController
     }
 
 
+    //route pour ajouter les catégories à la table Category précédemment créer en ligne de commande
+    // #[Route('/test-categories', name: 'test_categories')]
+    // public function testCategories(EntityManagerInterface $entityManager): Response
+    // {
+    //     $category1 = new Category();
+    //     $category1->setTitle('famille');
+    
+    //     $category2 = new Category();
+    //     $category2->setTitle('amis');
+    
+    //     $category3 = new Category();
+    //     $category3->setTitle('travail');
+    
+    //     $entityManager->persist($category1);
+    //     $entityManager->persist($category2);
+    //     $entityManager->persist($category3);
+    //     $entityManager->flush();
+    
+    //     return new Response('3 catégories créées !');
+    // }
 
+
+
+    
 }

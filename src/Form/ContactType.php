@@ -6,6 +6,8 @@ use App\Entity\Contact;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use App\Entity\Category;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class ContactType extends AbstractType
 {
@@ -18,6 +20,12 @@ class ContactType extends AbstractType
             ->add('adresse')
             ->add('ville')
             ->add('age')
+            ->add('category', EntityType::class, [  
+                'class' => Category::class,
+                'choice_label' => 'title',
+                'placeholder' => 'Choisir une catégorie',
+                'required' => false
+            ])
         ;
     }
 
